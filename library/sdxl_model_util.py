@@ -257,11 +257,11 @@ def load_models_from_sdxl_checkpoint(model_version, ckpt_path, map_location, dty
         elif k.startswith("conditioner.embedders.1.model."):
             te2_sd[k] = state_dict.pop(k)
 
-    info1 = text_model1.load_state_dict(te1_sd)
+    info1 = text_model1.load_state_dict(te1_sd, False)
     print("text encoder 1:", info1)
 
     converted_sd, logit_scale = convert_sdxl_text_encoder_2_checkpoint(te2_sd, max_length=77)
-    info2 = text_model2.load_state_dict(converted_sd)
+    info2 = text_model2.load_state_dict(converted_sd, False)
     print("text encoder 2:", info2)
 
     # prepare vae
@@ -271,7 +271,7 @@ def load_models_from_sdxl_checkpoint(model_version, ckpt_path, map_location, dty
 
     print("loading VAE from checkpoint")
     converted_vae_checkpoint = model_util.convert_ldm_vae_checkpoint(state_dict, vae_config)
-    info = vae.load_state_dict(converted_vae_checkpoint)
+    info = vae.load_state_dict(converted_vae_checkpoint, False)
     print("VAE:", info)
 
     ckpt_info = (epoch, global_step) if epoch is not None else None
